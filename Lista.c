@@ -2,9 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// --- FUNÇÕES AUXILIARES ---
-
-// Cria um novo nó
 No* criar_no(TipoDado dado) {
     No* novo_no = (No*)malloc(sizeof(No));
     if (novo_no == NULL) {
@@ -17,7 +14,6 @@ No* criar_no(TipoDado dado) {
     return novo_no;
 }
 
-// --- FUNÇÕES DE CRIAÇÃO E STATUS ---
 
 ListaDupla* criar_lista() {
     ListaDupla* nova_lista = (ListaDupla*)malloc(sizeof(ListaDupla));
@@ -39,7 +35,6 @@ int tamanho_lista(ListaDupla* lista) {
     return lista->tamanho;
 }
 
-// --- FUNÇÕES DE INSERÇÃO ---
 
 void inserir_inicio(ListaDupla* lista, TipoDado dado) {
     No* novo_no = criar_no(dado);
@@ -82,18 +77,15 @@ bool inserir_posicao(ListaDupla* lista, TipoDado dado, int posicao) {
         return true;
     }
 
-    // 1. Encontra o nó na posição (agora será o próximo do novo nó)
     No* no_proximo = buscar_posicao(lista, posicao);
-    if (no_proximo == NULL) return false; // Deve ser impossível se a verificação de limite estiver correta
+    if (no_proximo == NULL) return false; 
 
     No* novo_no = criar_no(dado);
     No* no_anterior = no_proximo->anterior;
 
-    // 2. Ajusta os ponteiros do novo nó
     novo_no->anterior = no_anterior;
     novo_no->proximo = no_proximo;
 
-    // 3. Ajusta os ponteiros dos nós vizinhos
     no_anterior->proximo = novo_no;
     no_proximo->anterior = novo_no;
 
@@ -101,7 +93,6 @@ bool inserir_posicao(ListaDupla* lista, TipoDado dado, int posicao) {
     return true;
 }
 
-// --- FUNÇÕES DE REMOÇÃO ---
 
 TipoDado remover_inicio(ListaDupla* lista) {
     if (lista_vazia(lista)) {
@@ -161,7 +152,6 @@ TipoDado remover_posicao(ListaDupla* lista, int posicao) {
         return remover_fim(lista);
     }
 
-    // 1. Encontra o nó a ser removido
     No* no_removido = buscar_posicao(lista, posicao);
     if (no_removido == NULL) {
         fprintf(stderr, "Erro interno: Nó na posicao %d nao encontrado.\n", posicao);
@@ -171,11 +161,9 @@ TipoDado remover_posicao(ListaDupla* lista, int posicao) {
     No* no_anterior = no_removido->anterior;
     No* no_proximo = no_removido->proximo;
 
-    // 2. Ajusta os ponteiros dos vizinhos (re-encadeamento)
     no_anterior->proximo = no_proximo;
     no_proximo->anterior = no_anterior;
 
-    // 3. Obtém o dado, libera a memória e atualiza o tamanho
     TipoDado dado_removido = no_removido->dado;
     free(no_removido);
     lista->tamanho--;
@@ -188,23 +176,19 @@ bool remover_valor(ListaDupla* lista, TipoDado valor) {
         return false; // Valor não encontrado
     }
 
-    // Caso o nó seja a cabeça
     if (no_removido == lista->cabeca) {
         remover_inicio(lista);
         return true;
     }
 
-    // Caso o nó seja a cauda
     if (no_removido == lista->cauda) {
         remover_fim(lista);
         return true;
     }
 
-    // Caso o nó esteja no meio
     No* no_anterior = no_removido->anterior;
     No* no_proximo = no_removido->proximo;
 
-    // Re-encadeia os vizinhos
     no_anterior->proximo = no_proximo;
     no_proximo->anterior = no_anterior;
 
@@ -213,17 +197,11 @@ bool remover_valor(ListaDupla* lista, TipoDado valor) {
     return true;
 }
 
-// --- FUNÇÕES DE BUSCA ---
-
 No* buscar_posicao(ListaDupla* lista, int posicao) {
     if (posicao < 0 || posicao >= lista->tamanho) {
         return NULL;
     }
 
-    No* atual;
-    
-    // Otimização de busca: Se a posição for na primeira metade, busca da cabeça.
-    // Se for na segunda metade, busca da cauda (vantagem da lista dupla).
     if (posicao < lista->tamanho / 2) {
         atual = lista->cabeca;
         for (int i = 0; i < posicao; i++) {
@@ -249,8 +227,6 @@ No* buscar_valor(ListaDupla* lista, TipoDado valor) {
     }
     return NULL;
 }
-
-// --- FUNÇÕES DE EXIBIÇÃO E DESTRUIÇÃO ---
 
 void exibir_lista(ListaDupla* lista) {
     if (lista_vazia(lista)) {
